@@ -8,15 +8,17 @@ class SparepartsController:
         self.abstract = abstract
         
         self.canvas_element = canvas_element
-        self.outer_colors = ["athens-white", "berlin-grey", "california-pink", "sydney-blue", "paris-beige", "hangzhou-green"];
-        self.inner_colors = [1, 2, 3, 4]
-        self.wheels = [1, 2, 3, 4]
+        self.outer_colors = ["white", "bronze", "blue", "black"];
+        self.inner_colors = [1, 2, 3]
+        self.wheels = [1, 2]
+        self.bumpers = [1, 2]
                 
         self.interior_btn = self.page.locator('.column-tabbar .column-tabbar-item').nth(2)
         self.wheels_and_colors_btn = self.page.locator('.column-tabbar .column-tabbar-item').nth(1)
         
         self.first_tab = self.page.locator('.componentsone-secondary-item').nth(0).locator('.componentsone-last')
         self.second_tab = self.page.locator('.componentsone-secondary-item').nth(1).locator('.componentsone-last')
+        self.third_tab = self.page.locator('.componentsone-secondary-item').nth(2).locator('.componentsone-last')
       
     @nvgt.wheels_and_colors_click
     def change_outer_color(self, index):
@@ -29,9 +31,14 @@ class SparepartsController:
         return self.first_tab.locator('.componentsone-last-item').nth(index)
       
     @nvgt.wheels_and_colors_click
-    def change_wheel(self, index):
+    def change_bumper(self, index):
         self.abstract.add_to_log("Changing wheel")
         return self.second_tab.locator('.componentsone-last-item').nth(index)
+      
+    @nvgt.wheels_and_colors_click
+    def change_wheel(self, index):
+        self.abstract.add_to_log("Changing wheel")
+        return self.third_tab.locator('.componentsone-last-item').nth(index)
       
     
     

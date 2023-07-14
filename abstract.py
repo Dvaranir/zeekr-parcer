@@ -54,4 +54,9 @@ class AbstractController:
         print("Waiting 8s")
         self.page.wait_for_timeout(8000)
         
+    @staticmethod
+    def enormous_timeout(self):
+        print("Waiting 30s")
+        self.page.wait_for_timeout(30000)
+        
         

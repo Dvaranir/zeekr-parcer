@@ -7,7 +7,7 @@ class RotationController:
         self.canvas_element = canvas_element
         self.abstract = abstract
         self.rotations = [
-            self.rotate_angle
+            self.rotate_angle,
             self.rotate_up,
             self.rotate_profile,
             self.rotate_front,

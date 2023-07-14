@@ -14,7 +14,7 @@ class PlaywrightController:
         ]
 
         self.canvas_element = '#application-canvas'
-        self.url = "https://www.zeekrlife.com/toReserve?modelInfoId=3"
+        self.url = "https://www.zeekrlife.com/toReserve?modelInfoId=2"
         self.wait_selector = '.reserve-main-tips'
         
         self.event_loop()
@@ -31,25 +31,20 @@ class PlaywrightController:
             for rotation in rotations.rotations:     
                 for i, o_color in enumerate(parts.outer_colors):
                     for j, i_color in enumerate(parts.inner_colors):
-                        
-                        if j >= 2 and o_color == "california-pink" :
-                            continue
-                        if j >= 3 and (o_color == "sydney-blue" or o_color == "hangzhou-green"):
-                            continue
-                        
                         parts.change_inner_color(j)
-                        
-                        for k, wheel in enumerate(parts.wheels):
-                            parts.change_wheel(k)
-                            parts.change_outer_color(i)
-                            # rotation()
-                            final_path = self.image_path_constructor(rotations.position, o_color, i_color, wheel)
-                            page.locator(canvas_element).screenshot(path=final_path, type='png')
-                            AbstractController.tiny_timeout(self)
-                            self.abstract.add_to_log(f"{final_path} saved")
+                        for z, bumper in enumerate(parts.bumpers):
+                            parts.change_bumper(z)
+                            for k, wheel in enumerate(parts.wheels):
+                                parts.change_wheel(k)
+                                parts.change_outer_color(i)
+                                rotation()
+                                final_path = self.image_path_constructor(rotations.position, o_color, i_color, bumper, wheel)
+                                page.locator(canvas_element).screenshot(path=final_path, type='png')
+                                AbstractController.tiny_timeout(self)
+                                self.abstract.add_to_log(f"{final_path} saved")
 
     def start_session(self, pw):
-        self.browser = pw.chromium.launch(headless=True,
+        self.browser = pw.chromium.launch(headless=False,
                                         executable_path='D:\Programs\Development\PlaywrightBrowsers\chromium-1060\chrome-win\chrome.exe',
                                         args=self.chrome_args,
                                         timeout=0)
@@ -64,9 +59,10 @@ class PlaywrightController:
         self.page.wait_for_load_state('networkidle', timeout=0)
         self.page.wait_for_selector(self.wait_selector, timeout=0)
         print(f"Selector {self.wait_selector} appeared")
+        AbstractController.enormous_timeout(self)
         
         self.hide_waste_elements()   
-        # self.lets_rock() 
+        self.lets_rock() 
                 
         
     def hide_waste_elements(self):
@@ -161,5 +157,5 @@ class PlaywrightController:
         self.page.evaluate(f"() => {{{js}}}")
         
         
-    def image_path_constructor(self, position, outer_color, inner_color, wheel_index):
-        return f"screenshots/{position}/{outer_color}-outer/{inner_color}-inner/{wheel_index}-wheel.png"
+    def image_path_constructor(self, position, outer_color, inner_color, bumper_index, wheel_index):
+        return f"screenshots/{position}/{outer_color}-outer/{inner_color}-inner/{bumper_index}-bumper/{wheel_index}-wheel.png"
