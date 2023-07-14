@@ -114,10 +114,3 @@ class RotationController:
     def rotate_angle(self):
         self.position = 'Angle'
         return
-
-        
-    
-        
-        
-    # def init_zoom(self):
-        
