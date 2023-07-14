@@ -5,6 +5,9 @@ class AbstractController:
     def js(self, js_string):
         return self.page.evaluate(f"() => {js_string}")
     
+    def add_to_log(self, message):
+        return self.js(f"log.textContent = '{message}'")
+    
     @staticmethod    
     def canvas_action_decorator(method):
         def wrapper(self, *args, **kwargs):
@@ -33,8 +36,8 @@ class AbstractController:
     
     @staticmethod
     def tiny_timeout(self):
-        print("Waiting 500ms")
-        self.page.wait_for_timeout(500)
+        print("Waiting 700ms")
+        self.page.wait_for_timeout(700)
     
     @staticmethod
     def small_timeout(self):
@@ -50,3 +53,5 @@ class AbstractController:
     def big_timeout(self):
         print("Waiting 8s")
         self.page.wait_for_timeout(8000)
+        
+        

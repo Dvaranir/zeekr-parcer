@@ -31,28 +31,33 @@ class PlaywrightController:
             for rotation in rotations.rotations:     
                 for i, o_color in enumerate(parts.outer_colors):
                     for j, i_color in enumerate(parts.inner_colors):
+                        
+                        if j >= 2 and o_color == "california-pink" :
+                            continue
+                        if j >= 3 and (o_color == "sydney-blue" or o_color == "hangzhou-green"):
+                            continue
+                        
                         parts.change_inner_color(j)
                         
-                        for wheel in parts.wheels:
-                            parts.change_wheel(wheel)
+                        for k, wheel in enumerate(parts.wheels):
+                            parts.change_wheel(k)
                             parts.change_outer_color(i)
-                            rotation()
+                            # rotation()
                             final_path = self.image_path_constructor(rotations.position, o_color, i_color, wheel)
                             page.locator(canvas_element).screenshot(path=final_path, type='png')
+                            AbstractController.tiny_timeout(self)
+                            self.abstract.add_to_log(f"{final_path} saved")
 
-            # browser.close()
-        
-        
     def start_session(self, pw):
-        self.browser = pw.chromium.launch(headless=False,
+        self.browser = pw.chromium.launch(headless=True,
                                         executable_path='D:\Programs\Development\PlaywrightBrowsers\chromium-1060\chrome-win\chrome.exe',
                                         args=self.chrome_args,
                                         timeout=0)
         self.page = self.browser.new_page()
         self.page.set_viewport_size({ 'width': 1920, 'height': 1080 })
-        abstract = AbstractController(self.page)
-        self.rotations = RotationController(self.page, self.canvas_element, abstract)
-        self.parts = SparepartsController(self.page, abstract, self.canvas_element)
+        self.abstract = AbstractController(self.page)
+        self.rotations = RotationController(self.page, self.canvas_element, self.abstract)
+        self.parts = SparepartsController(self.page, self.abstract, self.canvas_element)
         
         print(f"Fetching {self.url}")
         self.page.goto(self.url, timeout=0)
@@ -60,8 +65,9 @@ class PlaywrightController:
         self.page.wait_for_selector(self.wait_selector, timeout=0)
         print(f"Selector {self.wait_selector} appeared")
         
-        self.hide_waste_elements()    
-        
+        self.hide_waste_elements()   
+        # self.lets_rock() 
+                
         
     def hide_waste_elements(self):
         print(f"Removing waste elements")
@@ -81,6 +87,78 @@ class PlaywrightController:
             
         AbstractController.small_timeout(self)
         print("Removing done")
+        
+    def lets_rock(self):
+        js = '''
+            const head = document.head || document.getElementsByTagName('head')[0];
+            const style = document.createElement('style');
+            const css = `
+            .pricedetail{
+                background-color: #131116 !important;
+                opacity: 1 !important;
+                z-index: 1 !important;
+                pointer-events: none !important;
+            }
+            
+            .pricedetail{
+                padding-left: 0 !important;
+                width: 100% !important;
+                background-color: #131116 !important;
+                display: flex !important;
+                align-items: center !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                height: 100% !important;
+            }
+            
+            .pricedetail p{
+                color: #97CC04 !important;
+                font-size: 23px !important;
+                font-weight: 700 !important;
+                width: 80%;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                text-align: center: !important;
+            }
+            
+            .pricedetail div img{
+                width: 100% !important;
+            }
+            
+            .componentsone{
+                opacity: 0 !important;
+            }
+            `;
+            style.appendChild(document.createTextNode(css));
+            head.appendChild(style);
+            const pricedetail_box = document.querySelector('.pricedetail')
+            const pricedetail_box_children = pricedetail_box.querySelectorAll('*')
+            pricedetail_box_children.forEach(element => element.remove())
+            document.querySelector('.selectorfix').remove()
+            
+            const logo_container = document.createElement('div');
+            const logo_image = document.createElement('img');
+            logo_image.setAttribute('src', 'https://avatars.githubusercontent.com/u/87989392?s=400&u=863071ff228b33bbf75383915f31f34f98aa7bfd&v=4')
+            logo_container.appendChild(logo_image);
+            pricedetail_box.appendChild(logo_container);
+            
+            const title_command = document.createElement('p')
+            title_command.textContent = "Здесь я браузером коммандую!"
+            pricedetail_box.appendChild(title_command);
+            
+            const jay_container = document.createElement('div');
+            const jay_image = document.createElement('img');
+            jay_image.setAttribute('src', 'https://bigpicture.ru/wp-content/uploads/2018/11/bob1-800x420.jpg')
+            jay_container.appendChild(jay_image);
+            pricedetail_box.appendChild(jay_container);
+            
+            const log = document.createElement('p')
+            log.setAttribute('id', 'log')
+            log.textContent = "Лог"
+            pricedetail_box.appendChild(log);
+        '''
+        
+        self.page.evaluate(f"() => {{{js}}}")
         
         
     def image_path_constructor(self, position, outer_color, inner_color, wheel_index):

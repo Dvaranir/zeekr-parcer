@@ -8,9 +8,9 @@ class SparepartsController:
         self.abstract = abstract
         
         self.canvas_element = canvas_element
-        self.outer_colors = ["parisBeige", "athensWhite", "californiaPink", "berlinGrey", "hangzhouGreen", "sydneyBlue",];
-        self.inner_colors = ["roseViolet", "blueWhite", "grayBlack", "blueGreen"]
-        self.wheels = [0, 1, 2, 3]
+        self.outer_colors = ["athens-white", "berlin-grey", "california-pink", "sydney-blue", "paris-beige", "hangzhou-green"];
+        self.inner_colors = [1, 2, 3, 4]
+        self.wheels = [1, 2, 3, 4]
                 
         self.interior_btn = self.page.locator('.column-tabbar .column-tabbar-item').nth(2)
         self.wheels_and_colors_btn = self.page.locator('.column-tabbar .column-tabbar-item').nth(1)
@@ -20,14 +20,17 @@ class SparepartsController:
       
     @nvgt.wheels_and_colors_click
     def change_outer_color(self, index):
+        self.abstract.add_to_log("Changing outer color")
         return self.first_tab.locator('.componentsone-last-item').nth(index)
     
     @nvgt.interior_click
     def change_inner_color(self, index):
+        self.abstract.add_to_log("Changing interior color")
         return self.first_tab.locator('.componentsone-last-item').nth(index)
       
     @nvgt.wheels_and_colors_click
     def change_wheel(self, index):
+        self.abstract.add_to_log("Changing wheel")
         return self.second_tab.locator('.componentsone-last-item').nth(index)
       
     
