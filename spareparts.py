@@ -8,10 +8,10 @@ class SparepartsController:
         self.abstract = abstract
         
         self.canvas_element = canvas_element
-        self.outer_colors = ["white", "bronze", "blue", "black"];
-        self.inner_colors = [1, 2, 3]
-        self.wheels = [1, 2]
-        self.bumpers = [1, 2]
+        self.outer_colors = ["orange", "white", "platinum", "black", "ocean", "blue"];
+        self.inner_colors = [1, 2, 3, 4, 5]
+        self.wheels = [1, 2, 3, 4, 5]
+        self.roofs = [1, 2]
                 
         self.interior_btn = self.page.locator('.column-tabbar .column-tabbar-item').nth(2)
         self.wheels_and_colors_btn = self.page.locator('.column-tabbar .column-tabbar-item').nth(1)
@@ -31,7 +31,7 @@ class SparepartsController:
         return self.first_tab.locator('.componentsone-last-item').nth(index)
       
     @nvgt.wheels_and_colors_click
-    def change_bumper(self, index):
+    def change_roof(self, index):
         self.abstract.add_to_log("Changing wheel")
         return self.second_tab.locator('.componentsone-last-item').nth(index)
       
@@ -40,25 +40,5 @@ class SparepartsController:
         self.abstract.add_to_log("Changing wheel")
         return self.third_tab.locator('.componentsone-last-item').nth(index)
       
-    
-    
-    
-    # @abst.canvas_action_decorator
-    # def ew_fire(self, target, value):
-    #     js = f"EW.fire('{target}', {value});"
-    #     print(f"EW firing {js}")
-    #     self.abstract.js(js)
-        
-    # @abst.canvas_action_decorator
-    # def change_outer_color(self, index):
-    #     self.ew_fire('outerChange', index)
-
-    # @abst.canvas_action_decorator
-    # def change_inner_color(self, index):
-    #     self.ew_fire('innerChange', index)        
-
-    # @abst.canvas_action_decorator
-    # def change_wheel(self, index):
-    #     self.ew_fire('wheelChange', index)        
         
     

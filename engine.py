@@ -13,8 +13,8 @@ class PlaywrightController:
             '--ignore-gpu-blocklist',
         ]
 
-        self.canvas_element = '#application-canvas'
-        self.url = "https://www.zeekrlife.com/toReserve?modelInfoId=2"
+        self.canvas_element = '#car001'
+        self.url = "http://158.180.37.71/toReserve?modelInfoId=1"
         self.wait_selector = '.reserve-main-tips'
         
         self.event_loop()
@@ -32,17 +32,24 @@ class PlaywrightController:
                 for i, o_color in enumerate(parts.outer_colors):
                     for j, i_color in enumerate(parts.inner_colors):
                         parts.change_inner_color(j)
-                        for z, bumper in enumerate(parts.bumpers):
-                            parts.change_bumper(z)
+                        for z, roof in enumerate(parts.roofs):
+                            print(f"Roof index: {z}")
+                            if (o_color == 'orange' or o_color == 'black') and z >= 1:
+                                continue
+                            parts.change_roof(z)
                             for k, wheel in enumerate(parts.wheels):
+                                if o_color == 'orange' and k >= 4:
+                                    continue
                                 parts.change_wheel(k)
                                 parts.change_outer_color(i)
+                                AbstractController.small_timeout(self)
                                 rotation()
-                                final_path = self.image_path_constructor(rotations.position, o_color, i_color, bumper, wheel)
+                                AbstractController.tiny_timeout(self)
+                                final_path = self.image_path_constructor(rotations.position, o_color, i_color, roof, wheel)
                                 page.locator(canvas_element).screenshot(path=final_path, type='png')
                                 AbstractController.tiny_timeout(self)
                                 self.abstract.add_to_log(f"{final_path} saved")
-
+                                
     def start_session(self, pw):
         self.browser = pw.chromium.launch(headless=False,
                                         executable_path='D:\Programs\Development\PlaywrightBrowsers\chromium-1060\chrome-win\chrome.exe',
@@ -75,11 +82,19 @@ class PlaywrightController:
             '.footertoast',
         ]
         
+        removeElements = [
+            '.message.t-flex-column-c-c'
+        ]
+        
         for element in wasteElementsClasses:
             self.page.wait_for_selector(f"{element}")
             # self.page.evaluate(f"() => {{document.querySelector('{element}').remove()}}")
             self.page.evaluate(f"() => {{document.querySelector('{element}').style.opacity = '0';}}")
             print(f"Element {element} hidden")
+            
+        for element in removeElements:
+            self.page.evaluate(f"() => {{document.querySelector('{element}').remove();}}")
+            print(f"Element {element} removed")
             
         AbstractController.small_timeout(self)
         print("Removing done")
@@ -157,5 +172,5 @@ class PlaywrightController:
         self.page.evaluate(f"() => {{{js}}}")
         
         
-    def image_path_constructor(self, position, outer_color, inner_color, bumper_index, wheel_index):
-        return f"screenshots/{position}/{outer_color}-outer/{inner_color}-inner/{bumper_index}-bumper/{wheel_index}-wheel.png"
+    def image_path_constructor(self, position, outer_color, inner_color, roof_index, wheel_index):
+        return f"screenshots/{position}/{outer_color}-outer/{inner_color}-inner/{roof_index}-roof/{wheel_index}-wheel.png"
